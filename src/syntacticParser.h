@@ -1,4 +1,6 @@
 #include "tableCatalogue.h"
+#include "matrixCatalogue.h"
+// #include "matrix.h" 
 
 using namespace std;
 
@@ -12,6 +14,10 @@ enum QueryType
     JOIN,
     LIST,
     LOAD,
+    LOAD_MATRIX,
+    PRINT_MATRIX,
+    CROSS_TRANSPOSE,
+    EXPORT_MATRIX,
     PRINT,
     PROJECTION,
     RENAME,
@@ -57,6 +63,11 @@ public:
     string crossResultRelationName = "";
     string crossFirstRelationName = "";
     string crossSecondRelationName = "";
+
+    //Self Implemented Code
+    string cross_transFirstRelationName = "";
+    string cross_transSecondRelationName = "";
+    //Self Implemented Code
 
     string distinctResultRelationName = "";
     string distinctRelationName = "";
@@ -114,6 +125,12 @@ bool syntacticParseINDEX();
 bool syntacticParseJOIN();
 bool syntacticParseLIST();
 bool syntacticParseLOAD();
+//Self Implemented
+bool syntacticParseLOAD_MATRIX();
+bool syntacticParsePRINT_MATRIX();
+bool syntacticParseCROSS_TRANSPOSE();
+bool syntacticParseEXPORT_MATRIX();
+//Self Implemented
 bool syntacticParsePRINT();
 bool syntacticParsePROJECTION();
 bool syntacticParseRENAME();

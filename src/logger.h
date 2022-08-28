@@ -2,7 +2,8 @@
 #include<bits/stdc++.h>
 #include<sys/stat.h> 
 #include<fstream>
-
+#include<math.h>
+#include <cmath> 
 using namespace std;
 
 class Logger{

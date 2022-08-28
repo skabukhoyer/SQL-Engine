@@ -3,14 +3,16 @@
 
 using namespace std;
 
-float BLOCK_SIZE = 1;
+float BLOCK_SIZE = 36; // 36 byte : 9 Elements : 3x3 Matrix , max 8000 bytes we can take
 uint BLOCK_COUNT = 2;
 uint PRINT_COUNT = 20;
 Logger logger;
 vector<string> tokenizedQuery;
 ParsedQuery parsedQuery;
 TableCatalogue tableCatalogue;
+MatrixCatalogue matrixCatalogue;
 BufferManager bufferManager;
+Matrix_BufferManager matrix_bufferManager;
 
 void doCommand()
 {

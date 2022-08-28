@@ -11,6 +11,12 @@ void executeCommand(){
         case JOIN: executeJOIN(); break;
         case LIST: executeLIST(); break;
         case LOAD: executeLOAD(); break;
+        //Self Implemented : Begin
+        case LOAD_MATRIX: executeLOAD_MATRIX(); break;
+        case PRINT_MATRIX: executePRINT_MATRIX(); break;
+        case CROSS_TRANSPOSE: executeCROSS_TRANSPOSE(); break;
+        case EXPORT_MATRIX: executeEXPORT_MATRIX(); break;
+        //Self Implemented : End
         case PRINT: executePRINT(); break;
         case PROJECTION: executePROJECTION(); break;
         case RENAME: executeRENAME(); break;

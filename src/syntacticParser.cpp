@@ -17,6 +17,32 @@ bool syntacticParse()
         return syntacticParseINDEX();
     else if (possibleQueryType == "LIST")
         return syntacticParseLIST();
+    //Self Implemented : BEGIN
+    else if (possibleQueryType == "LOAD" and tokenizedQuery[1]=="MATRIX")
+    {       possibleQueryType = "LOAD_MATRIX";
+            return syntacticParseLOAD_MATRIX();
+    }
+    else if (possibleQueryType == "PRINT" and tokenizedQuery[1]=="MATRIX")
+    {
+        possibleQueryType = "PRINT_MATRIX";
+        return syntacticParsePRINT_MATRIX();
+    }
+
+    else if (possibleQueryType == "CROSS_TRANSPOSE"){
+        if (tokenizedQuery.size() < 3)
+        {
+            cout << "SYNTAX ERROR" << endl;
+            return false;
+        }
+        return syntacticParseCROSS_TRANSPOSE();
+
+    }
+    else if (possibleQueryType == "EXPORT" and tokenizedQuery[1]=="MATRIX")
+    {
+        possibleQueryType = "EXPORT_MATRIX";
+        return syntacticParseEXPORT_MATRIX();
+    }
+    //Self Implemented : END
     else if (possibleQueryType == "LOAD")
         return syntacticParseLOAD();
     else if (possibleQueryType == "PRINT")
@@ -71,6 +97,11 @@ void ParsedQuery::clear()
     this->crossResultRelationName = "";
     this->crossFirstRelationName = "";
     this->crossSecondRelationName = "";
+
+    //Self Implementd : Begin
+    this->cross_transFirstRelationName = "";
+    this->cross_transSecondRelationName = "";
+    //Self Implemented : End
 
     this->distinctResultRelationName = "";
     this->distinctRelationName = "";
