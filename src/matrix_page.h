@@ -19,7 +19,6 @@ class Matrix_Page{
     vector<vector<int>> rows;
 
     public:
-
     string pageName = "";
     Matrix_Page();
     Matrix_Page(string matrixName, int pageIndex);

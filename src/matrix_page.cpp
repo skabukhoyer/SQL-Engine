@@ -33,12 +33,8 @@ Matrix_Page::Matrix_Page(string matrixName, int pageIndex)
     this->pageName = "../data/temp/" + this->matrixName + "_Matrix_Page" + to_string(pageIndex);
     Matrix matrix = *matrixCatalogue.getMatrix(matrixName);
     this->columnCount = matrix.columnsPerBlockCount[pageIndex];
-    //cout << this->columnCount;
 
     uint maxRowCount = matrix.maxRowsPerBlock;
-    //vector<int> row(columnCount, 0);
-    //this->rows.assign(maxRowCount, row);
-
     ifstream fin(pageName, ios::in);
     this->rowCount = matrix.rowsPerBlockCount[pageIndex];
     int number;
@@ -49,7 +45,6 @@ Matrix_Page::Matrix_Page(string matrixName, int pageIndex)
         {
             fin >> number;
             row.emplace_back(number);
-            //this->rows[rowCounter][columnCounter] = number;
         }
         this->rows.emplace_back(row);
     }

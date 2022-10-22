@@ -132,7 +132,9 @@ bool Table::blockify()
             this->blockCount++;
             this->rowsPerBlockCount.emplace_back(pageCounter);
             pageCounter = 0;
+            BLOCK_ACCESS++;
         }
+
     }
     if (pageCounter)
     {
@@ -140,6 +142,7 @@ bool Table::blockify()
         this->blockCount++;
         this->rowsPerBlockCount.emplace_back(pageCounter);
         pageCounter = 0;
+        BLOCK_ACCESS++;
     }
 
     if (this->rowCount == 0)

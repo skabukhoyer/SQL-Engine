@@ -25,26 +25,6 @@ Matrix::Matrix(string matrixName)
 }
 
 /**
- * @brief Construct a new Matrix:: Matrix object used when an assignment command
- * is encountered. To create the matrix object both the matrix name and the
- * columns the matrix holds should be specified.
- *
- * @param matrixName 
- * @param columns 
- */
-Matrix::Matrix(string matrixName, vector<string> columns)
-{
-    logger.log("Matrix::Matrix");
-    this->sourceFileName = "../data/temp/" + matrixName + ".csv";
-    this->matrixName = matrixName;
-    this->columns = columns;
-    this->columnCount = columns.size();
-    //this->maxRowsPerBlock = (uint)((BLOCK_SIZE * 1000) / (32 * columnCount));
-    this->maxRowsPerBlock = floor(sqrt((uint)((BLOCK_SIZE) / (4))));
-    this->writeRow<string>(columns);
-}
-
-/**
  * @brief The load function is used when the LOAD command is encountered. It
  * reads data from the source file, splits it into blocks and updates matrix
  * statistics.
@@ -60,47 +40,23 @@ bool Matrix::load()
     if (getline(fin, line))
     {
         fin.close();
-        if (this->extractColumnNames(line))
+        // if (this->extractColumnNames(line))
+        vector<string> columnNames;
+        string word;
+        stringstream s(line);
+        while (getline(s, word, ','))
+        {
+            word.erase(std::remove_if(word.begin(), word.end(), ::isspace), word.end());
+            columnNames.emplace_back(word);
+        }
+        this->columnCount = columnNames.size();
+        this->maxRowsPerBlock = floor(sqrt((uint)((BLOCK_SIZE) / (4))));
+        this->maxColumnsPerBlock = floor(sqrt((uint)((BLOCK_SIZE) / (4))));
             if (this->blockify())
                 return true;
     }
     fin.close();
     return false;
-}
-
-/**
- * @brief Function extracts column names from the header line of the .csv data
- * file. 
- *
- * @param line 
- * @return true if column names successfully extracted (i.e. no column name
- * repeats)
- * @return false otherwise
- */
-bool Matrix::extractColumnNames(string firstLine)
-{
-    logger.log("Matrix::extractColumnNames");
-    unordered_set<string> columnNames;
-    string word;
-    stringstream s(firstLine);
-    while (getline(s, word, ','))
-    {
-        word.erase(std::remove_if(word.begin(), word.end(), ::isspace), word.end());
-        // if (columnNames.count(word))
-        //     return false;
-        columnNames.insert(word);
-        this->columns.emplace_back(word);
-    }
-    this->columnCount = this->columns.size();
-    //this->maxRowsPerBlock = (uint)((BLOCK_SIZE * 1000) / (32 * this->columnCount));
-    //we are using the pages/blocks that store ( square blocks of the matrix )
-    
-    //this->maxRowsPerBlock = 3; //Need to change this
-    this->maxRowsPerBlock = floor(sqrt((uint)((BLOCK_SIZE) / (4))));
-    //this->maxColumnsPerBlock=3; //Need to change this
-    this->maxColumnsPerBlock = floor(sqrt((uint)((BLOCK_SIZE) / (4))));
-
-    return true;
 }
 
 struct string_info
@@ -110,42 +66,54 @@ struct string_info
 };
 typedef struct string_info string_info; 
 
-string_info split_comma(string my_str, int index1, int index2)
+string_info split_comma(string my_str, int index1, int index2, int n)
 {
-    //cout<<my_str<<" "<<index1<<" "<<index2<<endl;
-    vector<string> result;
+    if(index2>=n){
+        index2=n;
+    }
+    string_info final_res;
+    final_res.size = index2 - index1;
     string res="";
     stringstream s_stream(my_str); //create string stream from the string
-    string_info final_res;
+    int i=0;
+    int count=0;
     while(s_stream.good()) 
     {
         string substr;
         getline(s_stream, substr, ','); //get first string delimited by comma
-        result.push_back(substr);
+        if(count>=index1){
+            i++;
+            if(i==final_res.size){
+                res += substr;
+                break;
+            }
+            else{
+                res += substr+",";
+            }
+        }
+        count++;
+        // result.push_back(substr);
     }
 
-    if (index2 >= result.size())
-    {
-        index2 = result.size();
-    }
+    //     if (index2 >= result.size())
+    //     {
+    //         index2 = result.size();
+    //     }
 
-   for(int i = index1; i < index2; i++) 
-   {    
-    
-        if (i==result.size()-1)
-          {
-            res = res+result.at(i); 
-          }
-        else
-          {
-            res = res+result.at(i)+","; 
-          }
-          
-   }
+    //    for(int i = index1; i < index2; i++) 
+    //    {    
+        
+    //         if (i==result.size()-1)
+    //           {
+    //             res = res+result.at(i); 
+    //           }
+    //         else
+    //           {
+    //             res = res+result.at(i)+","; 
+    //           }
+            
+    //    }
    final_res.result = res;
-   final_res.size = index2 - index1;
-
-
     return final_res;
 }
 
@@ -160,17 +128,7 @@ void print_vec2D(vector<vector<int>> vec)
         cout << endl;
     }
 }
-void print_vec2D_u(vector<vector<uint>> vec)
-{
-    for (int i = 0; i < vec.size(); i++)
-    {
-        for (int j = 0; j < vec[i].size(); j++)
-        {
-            cout << vec[j][i]<<" ";
-        }
-        cout << endl;
-    }
-}
+
 
 void print_vec1D(vector<int> vec)
 {
@@ -186,13 +144,13 @@ bool check_integer(string word)
     {
         if (!isdigit(word[i]))
         {
+            // cout<<word[i]<<endl;
             return false;
         }
     }
 
     return true;
 }
-
 
 
 /**
@@ -226,7 +184,7 @@ bool Matrix::blockify()
 
         while (getline(fin, line))
         {
-            line_temp = split_comma(line, columnBlockCounter*this->maxColumnsPerBlock, columnBlockCounter*this->maxColumnsPerBlock+this->maxColumnsPerBlock);
+            line_temp = split_comma(line, columnBlockCounter*this->maxColumnsPerBlock, columnBlockCounter*this->maxColumnsPerBlock+this->maxColumnsPerBlock, this->columnCount);
             line = line_temp.result;
             //cout << line << " " << line_temp.size << endl;
 
@@ -235,7 +193,6 @@ bool Matrix::blockify()
             {
                 if (!getline(s, word, ','))
                     return false;
-                //cout << "Word: "<< word <<endl;
                 if(!check_integer(word))
                 {
                     cout << "The matrix contains a non integer!";
@@ -324,28 +281,6 @@ bool Matrix::isColumn(string columnName)
         }
     }
     return false;
-}
-
-/**
- * @brief Renames the column indicated by fromColumnName to toColumnName. It is
- * assumed that checks such as the existence of fromColumnName and the non prior
- * existence of toColumnName are done.
- *
- * @param fromColumnName 
- * @param toColumnName 
- */
-void Matrix::renameColumn(string fromColumnName, string toColumnName)
-{
-    logger.log("Matrix::renameColumn");
-    for (int columnCounter = 0; columnCounter < this->columnCount; columnCounter++)
-    {
-        if (columns[columnCounter] == fromColumnName)
-        {
-            columns[columnCounter] = toColumnName;
-            break;
-        }
-    }
-    return;
 }
 
 vector<int> append_vec(vector<int> a, vector<int> b)
@@ -485,8 +420,6 @@ void Matrix::makePermanent()
     logger.log("Matrix::makePermanent");
 
     vector<vector<int>> result_matrix;
-    //print_vec2D_u(this->pageNames);
-    //cout<<endl;
     
     for (int blockMatrixRowCounter = 0; blockMatrixRowCounter < this->pageNames.size(); blockMatrixRowCounter++)
     {
@@ -499,8 +432,6 @@ void Matrix::makePermanent()
                 do
                 {
                     row = matrix_cursor.getRandomPageRow();
-                    //print_vec1D(row);
-                    //cout<<endl;
 
                     if (blockMatrixRowCounter==0)
                     {
@@ -516,7 +447,6 @@ void Matrix::makePermanent()
                 } while(!row.empty());
             }
     }
-    //print_vec2D(result_matrix);
     if(!this->isPermanent())
         matrix_bufferManager.deleteFile(this->sourceFileName);
     string newSourceFile = "../data/" + this->matrixName + ".csv";
@@ -531,17 +461,6 @@ void Matrix::makePermanent()
     fout.close();
     cout << "Exported the matrix successfully."<<endl;
 
-    // //print headings
-    // this->writeRow(this->columns, fout);
-
-    // Matrix_Cursor matrix_cursor(this->matrixName, 0);
-    // vector<int> row;
-    // for (int rowCounter = 0; rowCounter < this->rowCount; rowCounter++)
-    // {
-    //     row = matrix_cursor.getNext();
-    //     this->writeRow(row, fout);
-    // }
-    // fout.close();
 }
 
 /**
@@ -581,19 +500,4 @@ Matrix_Cursor Matrix::getCursor()
     logger.log("Matrix::getCursor");
     Matrix_Cursor matrix_cursor(this->matrixName, 0);
     return matrix_cursor;
-}
-/**
- * @brief Function that returns the index of column indicated by columnName
- * 
- * @param columnName 
- * @return int 
- */
-int Matrix::getColumnIndex(string columnName)
-{
-    logger.log("Matrix::getColumnIndex");
-    for (int columnCounter = 0; columnCounter < this->columnCount; columnCounter++)
-    {
-        if (this->columns[columnCounter] == columnName)
-            return columnCounter;
-    }
 }

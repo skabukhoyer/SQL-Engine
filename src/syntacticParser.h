@@ -22,6 +22,7 @@ enum QueryType
     PROJECTION,
     RENAME,
     SELECTION,
+    GROUP_BY,
     SORT,
     SOURCE,
     UNDETERMINED
@@ -51,12 +52,31 @@ enum SelectType
     INT_LITERAL,
     NO_SELECT_CLAUSE
 };
-
+enum AggregateType
+{
+    MIN,
+    MAX,
+    SUM,
+    AVG,
+    NO_AGGREGATE
+};
+enum JoinType
+{
+    NESTED,
+    PARTHASH,
+    SIMPLE
+};
 class ParsedQuery
 {
 
 public:
     QueryType queryType = UNDETERMINED;
+    
+    AggregateType aggregateType= NO_AGGREGATE;
+    string group_byResultRelationName="";
+    string group_byRelationName="";
+    string group_byAttributeName="";
+    string group_byAggregateColumnName="";
 
     string clearRelationName = "";
 
@@ -79,6 +99,8 @@ public:
     string indexRelationName = "";
 
     BinaryOperator joinBinaryOperator = NO_BINOP_CLAUSE;
+    JoinType joinType = SIMPLE ;
+    int NO_BUFFER = 0;
     string joinResultRelationName = "";
     string joinFirstRelationName = "";
     string joinSecondRelationName = "";
@@ -135,6 +157,8 @@ bool syntacticParsePRINT();
 bool syntacticParsePROJECTION();
 bool syntacticParseRENAME();
 bool syntacticParseSELECTION();
+bool syntacticParseGROUP_BY();
+// bool syntacticParse
 bool syntacticParseSORT();
 bool syntacticParseSOURCE();
 

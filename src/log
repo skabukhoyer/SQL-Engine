@@ -3,3 +3,6 @@ Matrix_BufferManager::Matrix_BufferManager
 ParseQuery::clear
 
 Reading New Command: 
+QUIT
+MatrixCatalogue::~MatrixCatalogue
+TableCatalogue::~TableCatalogue

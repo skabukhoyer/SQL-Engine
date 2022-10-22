@@ -66,6 +66,10 @@ bool syntacticParse()
             return syntacticParsePROJECTION();
         else if (possibleQueryType == "SELECT")
             return syntacticParseSELECTION();
+        else if(possibleQueryType=="GROUP" and tokenizedQuery.size()==9 and tokenizedQuery[3]=="BY"){
+            possibleQueryType = "GROUP_BY";
+            return syntacticParseGROUP_BY();
+        }
         else if (possibleQueryType == "JOIN")
             return syntacticParseJOIN();
         else if (possibleQueryType == "CROSS")
@@ -92,6 +96,12 @@ void ParsedQuery::clear()
     logger.log("ParseQuery::clear");
     this->queryType = UNDETERMINED;
 
+    this->aggregateType = NO_AGGREGATE;
+    this->group_byResultRelationName="";
+    this->group_byRelationName="";
+    this->group_byAttributeName="";
+    this->group_byAggregateColumnName="";
+
     this->clearRelationName = "";
 
     this->crossResultRelationName = "";
@@ -113,6 +123,8 @@ void ParsedQuery::clear()
     this->indexRelationName = "";
 
     this->joinBinaryOperator = NO_BINOP_CLAUSE;
+    this->joinType = SIMPLE;
+    this->NO_BUFFER = 0;
     this->joinResultRelationName = "";
     this->joinFirstRelationName = "";
     this->joinSecondRelationName = "";

@@ -73,7 +73,7 @@ void executeCROSS()
         columns.emplace_back(columnName);
     }
 
-    Table *resultantTable = new Table(parsedQuery.crossResultRelationName, columns);\
+    Table *resultantTable = new Table(parsedQuery.crossResultRelationName, columns);
 
     Cursor cursor1 = table1.getCursor();
     Cursor cursor2 = table2.getCursor();

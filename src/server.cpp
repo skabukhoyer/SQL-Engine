@@ -3,9 +3,10 @@
 
 using namespace std;
 
-float BLOCK_SIZE = 36; // 36 byte : 9 Elements : 3x3 Matrix , max 8000 bytes we can take
+float BLOCK_SIZE = 8000; // 36 byte : 9 Elements : 3x3 Matrix , max 8000 bytes we can take
 uint BLOCK_COUNT = 2;
 uint PRINT_COUNT = 20;
+uint BLOCK_ACCESS = 0;
 Logger logger;
 vector<string> tokenizedQuery;
 ParsedQuery parsedQuery;

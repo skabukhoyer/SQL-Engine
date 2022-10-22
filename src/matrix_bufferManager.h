@@ -28,7 +28,6 @@ class Matrix_BufferManager{
     Matrix_Page insertIntoPool(string matrixName, int pageIndex);
 
     public:
-    
     Matrix_BufferManager();
     Matrix_Page getPage(string matrixName, int pageIndex);
     void writePage(string pageName, vector<vector<int>> rows);

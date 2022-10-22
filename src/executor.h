@@ -18,6 +18,7 @@ void executePRINT();
 void executePROJECTION();
 void executeRENAME();
 void executeSELECTION();
+void executeGROUP_BY();
 void executeSORT();
 void executeSOURCE();
 

@@ -18,5 +18,6 @@ bool semanticParsePRINT();
 bool semanticParsePROJECTION();
 bool semanticParseRENAME();
 bool semanticParseSELECTION();
+bool semanticParseGROUP_BY();
 bool semanticParseSORT();
 bool semanticParseSOURCE();
